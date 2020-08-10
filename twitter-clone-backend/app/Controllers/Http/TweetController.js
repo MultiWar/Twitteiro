@@ -13,11 +13,15 @@ class TweetController {
     async store({request, auth}) {
         const queryHashTweet = Database.table('hashtag_tweets')
         const data = request.only(['body'])
-        var regex = /\W#(\w+)/gm
-        const tag = regex.exec(data.body)
-        const hashtag = await Hashtag.findOrCreate({text: tag[1]})
+
         const tweet = await Tweet.create({user_id: auth.user.id, body: data.body})
-        await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
+
+        var regex = /\W#(\w+)/gm
+        const tag = [...data.body.matchAll(regex)]
+        for (const ht of tag) {
+            const hashtag = await Hashtag.findOrCreate({text: ht[1]})
+            await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
+        }
         return tweet
     }
 

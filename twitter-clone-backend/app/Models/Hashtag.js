@@ -5,7 +5,7 @@ const Model = use('Model')
 
 class Hashtag extends Model {
     hashtag_tweets() {
-        this.hasMany('App/Models/Tweet')
+        return this.hasMany('App/Models/HashtagTweet')
     }
 }
 

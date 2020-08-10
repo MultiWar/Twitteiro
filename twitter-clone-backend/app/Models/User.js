@@ -42,6 +42,10 @@ class User extends Model {
   tweets() {
     return this.hasMany('App/Models/Tweet')
   }
+
+  followingRelations() {
+    return this.hasMany('App/Models/FollowingRelation')
+  }
 }
 
 module.exports = User

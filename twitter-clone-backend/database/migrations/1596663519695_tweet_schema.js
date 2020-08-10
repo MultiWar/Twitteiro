@@ -9,6 +9,7 @@ class PostSchema extends Schema {
             table.increments();
             table.integer("user_id").unsigned().references("id").inTable("users").onDelete('CASCADE').onUpdate('CASCADE');
             table.string("body").notNullable();
+            table.boolean('isRetweet').defaultTo(false);
             table.string("anexedUrl");
             table.timestamps();
         });

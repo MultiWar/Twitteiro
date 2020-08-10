@@ -19,8 +19,12 @@ const Route = use('Route')
 Route.on('/').render('welcome')
 Route.post('/cadastro', 'UserController.store')
 Route.post('/login', 'UserController.login')
+Route.get('/teste', 'UserController.index')
 Route.group(() => {
     Route.post('/tweets', 'TweetController.store')
     Route.get('/tweets', 'TweetController.index')
     Route.delete('/tweets/:id', 'TweetController.delete')
 }).middleware('auth')
+
+Route.post('/follow/:id', 'UserController.follow').middleware('auth')
+Route.delete('/unfollow/:id', 'UserController.unfollow').middleware('auth')
