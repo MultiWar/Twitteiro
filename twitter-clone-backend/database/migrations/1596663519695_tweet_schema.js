@@ -8,8 +8,10 @@ class PostSchema extends Schema {
         this.create("tweets", (table) => {
             table.increments();
             table.integer("user_id").unsigned().references("id").inTable("users").onDelete('CASCADE').onUpdate('CASCADE');
+            table.integer('respondedId')
             table.string("body").notNullable();
             table.boolean('isRetweet').defaultTo(false);
+            table.boolean('hasCommentary')
             table.string("anexedUrl");
             table.timestamps();
         });

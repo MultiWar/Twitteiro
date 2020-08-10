@@ -21,8 +21,9 @@ Route.post('/cadastro', 'UserController.store')
 Route.post('/login', 'UserController.login')
 Route.get('/teste', 'UserController.index')
 Route.group(() => {
-    Route.post('/tweets', 'TweetController.store')
     Route.get('/tweets', 'TweetController.index')
+    Route.get('/tweets/:id', 'TweetController.show')
+    Route.post('/tweets/:retweetId?/:responseId?', 'TweetController.store')
     Route.delete('/tweets/:id', 'TweetController.delete')
 }).middleware('auth')
 
