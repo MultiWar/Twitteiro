@@ -23,7 +23,10 @@ Route.get('/teste', 'UserController.index')
 Route.group(() => {
     Route.get('/tweets', 'TweetController.index')
     Route.get('/tweets/:id', 'TweetController.show')
-    Route.post('/tweets/:retweetId?/:responseId?', 'TweetController.store')
+    Route.post('/tweets', 'TweetController.store')
+    Route.post('/tweets/retweetNoBody/:id', 'TweetController.retweetNoBody')
+    Route.post('/tweets/retweetBody/:id', 'TweetController.retweetWithBody')
+    Route.post('/tweets/respond/:id', 'TweetController.respondTweet')
     Route.delete('/tweets/:id', 'TweetController.delete')
 }).middleware('auth')
 

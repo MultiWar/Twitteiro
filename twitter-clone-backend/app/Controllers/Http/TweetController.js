@@ -13,52 +13,64 @@ class TweetController {
     async store({params, request, auth}) {
         const queryHashTweet = Database.table('hashtag_tweets')
         const data = request.only(['body'])
+        
+        const tweet = await Tweet.create({user_id: auth.user.id, body: data.body})
 
-        if(params.retweetId) {
-            const anexedTweet = await Tweet.find(params.retweetId)
-
-            if(!data.body) {
-                const tweet = await Tweet.create({user_id: auth.user.id, body: anexedTweet.body, isRetweet: true, hasCommentary: false})
-
-                var regex = /\W#(\w+)/gm
-                const tag = [...anexedTweet.body.matchAll(regex)]
-                for (const ht of tag) {
-                    const hashtag = await Hashtag.findOrCreate({text: ht[1]})
-                    await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
-                }
-            }
-            else {
-                const tweet = await Tweet.create({user_id: auth.user.id, body: data.body, isRetweet: true, hasCommentary: true})
-
-                var regex = /\W#(\w+)/gm
-                const tag = [...data.body.matchAll(regex)]
-                for (const ht of tag) {
-                    const hashtag = await Hashtag.findOrCreate({text: ht[1]})
-                    await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
-                }
-            }
+        var regex = /\W#(\w+)/gm
+        const tag = [...data.body.matchAll(regex)]
+        for (const ht of tag) {
+            const hashtag = await Hashtag.findOrCreate({text: ht[1]})
+            await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
         }
-        else if(params.responseId) {
-            const tweet = await Tweet.create({user_id: auth.user.id, body: data.body, respondedId: responseId})
+        return tweet
+    }
 
-            var regex = /\W#(\w+)/gm
-            const tag = [...data.body.matchAll(regex)]
-            for (const ht of tag) {
-                const hashtag = await Hashtag.findOrCreate({text: ht[1]})
-                await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
-            }
+    async retweetNoBody({params, auth}) {
+        const retweetedId = params.id
+        const anexedTweet = await Tweet.find(retweetedId)
+        const queryHashTweet = Database.table('hashtag_tweets')
+
+        const tweet = await Tweet.create({user_id: auth.user.id, body: anexedTweet.body, isRetweet: true, hasCommentary: false, anexedUrl: `/tweets/${retweetedId}`})
+
+        var regex = /\W#(\w+)/gm
+        const tag = [...anexedTweet.body.matchAll(regex)]
+        for (const ht of tag) {
+            const hashtag = await Hashtag.findOrCreate({text: ht[1]})
+            await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
         }
-        else {
-            const tweet = await Tweet.create({user_id: auth.user.id, body: data.body})
+        return tweet
+    }
 
-            var regex = /\W#(\w+)/gm
-            const tag = [...data.body.matchAll(regex)]
-            for (const ht of tag) {
-                const hashtag = await Hashtag.findOrCreate({text: ht[1]})
-                await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
-            }
-            return tweet
-        }        
+    async retweetWithBody({params, auth, request}) {
+        const retweetedId = params.id
+        const queryHashTweet = Database.table('hashtag_tweets')
+        const data = request.only(['body'])
+
+        const tweet = await Tweet.create({user_id: auth.user.id, body: data.body, isRetweet: true, hasCommentary: true, anexedUrl: `/tweets/${retweetedId}`})
+
+        var regex = /\W#(\w+)/gm
+        const tag = [...data.body.matchAll(regex)]
+        for (const ht of tag) {
+            const hashtag = await Hashtag.findOrCreate({text: ht[1]})
+            await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
+        }
+        return tweet
+    }
+
+    async respondTweet({params, auth, request}) {
+        const responseId = params.id
+        const queryHashTweet = Database.table('hashtag_tweets')
+        const data = request.only(['body'])
+
+        const tweet = await Tweet.create({user_id: auth.user.id, body: data.body, respondedId: responseId})
+
+        var regex = /\W#(\w+)/gm
+        const tag = [...data.body.matchAll(regex)]
+        for (const ht of tag) {
+            const hashtag = await Hashtag.findOrCreate({text: ht[1]})
+            await queryHashTweet.insert({tweet_id: tweet.id, hashtag_id: hashtag.id})
+        }
+        return tweet
     }
 
     async show({params}) {
