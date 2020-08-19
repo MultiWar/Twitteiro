@@ -1,12 +1,13 @@
 'use strict'
 const Tweet = use('App/Models/Tweet')
 const Hashtag = use('App/Models/Hashtag')
+const Like = use('App/Models/Like')
 const Database = use('Database')
 
 class TweetController {
 
     async index() {
-        const tweets = await Tweet.query().with('hashtag_tweets').fetch();
+        const tweets = await Tweet.query().with('hashtags').fetch();
         return tweets
     }
 
@@ -86,6 +87,15 @@ class TweetController {
         }
         await tweet.delete()
         return response.status(200).send('Tweet deletado')
+    }
+
+    async like({params, auth, response}) {
+        const tweet = await Tweet.find(params.id)
+        const totalLikes = tweet.totalOfLikes
+        await Like.create({postId: params.id, userId: auth.user.id})
+        await tweet.merge({totalOfLikes: totalLikes + 1})
+        // arrumar linha de baixo
+        return await Tweet.query().where('id', '=', params.id).with('likes').fetch();
     }
 }
 

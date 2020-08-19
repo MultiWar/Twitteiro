@@ -7,12 +7,19 @@ class PostSchema extends Schema {
     up() {
         this.create("tweets", (table) => {
             table.increments();
-            table.integer("user_id").unsigned().references("id").inTable("users").onDelete('CASCADE').onUpdate('CASCADE');
-            table.integer('respondedId')
+            table
+                .integer("user_id")
+                .unsigned()
+                .references("id")
+                .inTable("users")
+                .onDelete("CASCADE")
+                .onUpdate("CASCADE");
+            table.integer("respondedId");
             table.string("body").notNullable();
-            table.boolean('isRetweet').defaultTo(false);
-            table.boolean('hasCommentary')
+            table.boolean("isRetweet").defaultTo(false);
+            table.boolean("hasCommentary").defaultTo(false);
             table.string("anexedUrl");
+            table.integer("totalOfLikes").defaultTo(0);
             table.timestamps();
         });
     }

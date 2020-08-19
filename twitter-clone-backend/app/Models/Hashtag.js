@@ -4,8 +4,8 @@
 const Model = use('Model')
 
 class Hashtag extends Model {
-    hashtag_tweets() {
-        return this.hasMany('App/Models/HashtagTweet')
+    tweets () {
+        return this.belongsToMany('App/Models/Tweet').pivotModel('App/Models/HashtagTweet')
     }
 }
 

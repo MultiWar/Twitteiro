@@ -28,6 +28,7 @@ Route.group(() => {
     Route.post('/tweets/retweetBody/:id', 'TweetController.retweetWithBody')
     Route.post('/tweets/respond/:id', 'TweetController.respondTweet')
     Route.delete('/tweets/:id', 'TweetController.delete')
+    Route.post('/likeTweet/:id', 'TweetController.like')
 }).middleware('auth')
 
 Route.post('/follow/:id', 'UserController.follow').middleware('auth')

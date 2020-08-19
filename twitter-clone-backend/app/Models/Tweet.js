@@ -8,8 +8,12 @@ class Tweet extends Model {
         return this.belongsTo('App/Models/User')
     }
 
-    hashtag_tweets() {
-        return this.hasMany('App/Models/HashtagTweet')
+    hashtags () {
+        return this.belongsToMany('App/Models/Hashtag').pivotModel('App/Models/HashtagTweet');
+    }
+    
+    likes () {
+        return this.hasMany('App/Models/Like')
     }
 }
 
